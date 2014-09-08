@@ -6,19 +6,26 @@ using CP.Diagnostics.Sitecore.LogAnalyzer.TaskHelpers;
 
 namespace CP.Diagnostics.Sitecore.LogAnalyzer
 {
-	public static class LogFilesAnalyzer
+	public class LogFilesAnalyzer
 	{
-		public static string LogDirectory;
-		public static string LogFileRegex = "*log.*.txt";
-		public static int LookBackHours = 1;
-		public static LogLevel LogLevel = LogLevel.Error;
+		public string LogDirectory { get; set; }
+		public string LogFileRegex { get; set; }
+		public int LookBackHours { get; set; }
+		public LogLevel LogLevel { get; set; }
 
-		public static DateTime FromDate
+		public LogFilesAnalyzer()
+		{
+			LogFileRegex = "*log.*.txt";
+			LookBackHours = 1;
+			LogLevel = LogLevel.Error;
+		}
+
+		public DateTime FromDate
 		{
 			get { return DateTime.Now.AddHours(LookBackHours * -1); }
 		}
 
-		public static IEnumerable<LogEntry> Analyze()
+		public IEnumerable<LogEntry> Analyze()
 		{
 			var result = new List<LogEntry>();
 			var dirInfo = new DirectoryInfo(LogDirectory);
@@ -30,14 +37,14 @@ namespace CP.Diagnostics.Sitecore.LogAnalyzer
 			return result.OrderByDescending(l => l.DateTime);
 		}
 
-		private static IEnumerable<FileInfo> GetFiles(DirectoryInfo dirInfo)
+		private IEnumerable<FileInfo> GetFiles(DirectoryInfo dirInfo)
 		{
 			var files = dirInfo.GetFiles(LogFileRegex);
 			var validFiles = files.Where(f => DateTimeExtensions.GetDateFromFileName(f.Name).Date >= FromDate.Date).ToList();
 			return validFiles.Any() ? validFiles : files.OrderByDescending(f => f.LastWriteTimeUtc).Take(5);
 		}
 
-		private static StreamReader GetStream(FileInfo fileInfo)
+		private StreamReader GetStream(FileInfo fileInfo)
 		{
 			var fileStream = fileInfo.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 			return new StreamReader(fileStream);

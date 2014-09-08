@@ -24,10 +24,11 @@ namespace CP.Diagnostics.Sitecore.LogAnalyzer
 		public void Run()
 		{
 			// Read parameters from Task Configuration
-			ReadConfig();
+			var filesAnalyzer = GetAnalyzer();
+
 
 			// Get Log Entries
-			var logEntries = LogFilesAnalyzer.Analyze().ToList();
+			var logEntries = filesAnalyzer.Analyze().ToList();
 
 			// if no entries are found return.
 			if (!logEntries.Any())
@@ -35,48 +36,54 @@ namespace CP.Diagnostics.Sitecore.LogAnalyzer
 
 			// build error list string
 			var errorList = new StringBuilder();
-			
+
 			logEntries.ForEach(logEntry =>
-				{
-					errorList.AppendLine("File Name: " + logEntry.FileName);
-					errorList.AppendLine("Event Source: " + logEntry.EventSource);
-					errorList.AppendLine("Date: " + logEntry.DateTime);
-					errorList.AppendLine("Level: " + logEntry.LogLevel);
-					errorList.AppendLine("Text: " + logEntry.Text);
-					errorList.AppendLine("");
-				});
+			{
+				errorList.AppendLine("File Name: " + logEntry.FileName);
+				errorList.AppendLine("Event Source: " + logEntry.EventSource);
+				errorList.AppendLine("Date: " + logEntry.DateTime);
+				errorList.AppendLine("Level: " + logEntry.LogLevel);
+				errorList.AppendLine("Text: " + logEntry.Text);
+				errorList.AppendLine("");
+			});
 
 			// Send Email
 			SendEmail("Found " + logEntries.Count + " errors. The list of errors found are below", errorList.ToString());
 		}
 
-		private void ReadConfig()
+		private LogFilesAnalyzer GetAnalyzer()
 		{
+			var filesAnalyzer = new LogFilesAnalyzer();
 			if (!string.IsNullOrEmpty(LogDirectory))
-				LogFilesAnalyzer.LogDirectory = LogDirectory;
+				filesAnalyzer.LogDirectory = LogDirectory;
 			if (!string.IsNullOrEmpty(LogFilesRegEx))
-				LogFilesAnalyzer.LogFileRegex = LogFilesRegEx;
+				filesAnalyzer.LogFileRegex = LogFilesRegEx;
 			if (LookBackHours != 0)
-				LogFilesAnalyzer.LookBackHours = LookBackHours;
+				filesAnalyzer.LookBackHours = LookBackHours;
 			if (!string.IsNullOrEmpty(LogLevel))
 			{
 				try
 				{
-					LogFilesAnalyzer.LogLevel = (LogLevel) Enum.Parse(typeof (LogLevel), LogLevel, true);
+					filesAnalyzer.LogLevel = (LogLevel)Enum.Parse(typeof(LogLevel), LogLevel, true);
 				}
-				catch { }
+				catch
+				{
+					filesAnalyzer.LogLevel = LogAnalyzer.LogLevel.Error;
+				}
 			}
+
+			return filesAnalyzer;
 		}
 
 		private void SendEmail(string errorCountString, string errorListString)
 		{
 			var mail = new MailMessage
-				{
-					From = new MailAddress(FromAddress),
-					Subject = ClientName + ": Logs",
-					Priority = MailPriority.High,
-					Body = AsAttachement ? errorCountString : errorCountString + Environment.NewLine + errorListString
-				};
+			{
+				From = new MailAddress(FromAddress),
+				Subject = ClientName + ": Logs",
+				Priority = MailPriority.High,
+				Body = AsAttachement ? errorCountString : errorCountString + Environment.NewLine + errorListString
+			};
 			EmailIds.Split(';').ToList().ForEach(e => mail.To.Add(e.Trim()));
 
 			if (AsAttachement)
@@ -105,5 +112,7 @@ namespace CP.Diagnostics.Sitecore.LogAnalyzer
 				emailClient.Send(mail);
 			}
 		}
+
+		public object analyzer { get; set; }
 	}
 }

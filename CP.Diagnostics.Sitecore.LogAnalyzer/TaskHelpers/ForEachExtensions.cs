@@ -26,7 +26,8 @@ namespace CP.Diagnostics.Sitecore.LogAnalyzer.TaskHelpers
 				resetEvents.Add(evt);
 			}
 
-			WaitHandle.WaitAll(resetEvents.ToArray());
+			foreach (var re in resetEvents)
+				re.WaitOne();
 		}
 	}
 }
