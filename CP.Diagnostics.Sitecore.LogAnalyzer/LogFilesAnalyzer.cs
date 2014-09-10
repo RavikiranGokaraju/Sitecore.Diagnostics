@@ -34,7 +34,7 @@ namespace CP.Diagnostics.Sitecore.LogAnalyzer
 			// This can be replaced with Parallel.ForaEach for .net 4.5
 			ForEachExtensions.ForEach(files, fileInfo => result.AddRange(LogFileParser.ParseFile(GetStream(fileInfo), fileInfo.Name, LogLevel, FromDate)));
 
-			return result.OrderByDescending(l => l.DateTime);
+			return result.Where(x => x != null).OrderByDescending(l => l.DateTime);
 		}
 
 		private IEnumerable<FileInfo> GetFiles(DirectoryInfo dirInfo)
