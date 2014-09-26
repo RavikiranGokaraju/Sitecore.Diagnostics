@@ -1,0 +1,5 @@
+C:\Users\ravikiran gokaraju\Documents\GitRepositories\Sitecore.Diagnostics\CP.Diagnostics.Sitecore.LogAnalyzer\bin\Debug\CP.Diagnostics.Sitecore.LogAnalyzer.dll
+C:\Users\ravikiran gokaraju\Documents\GitRepositories\Sitecore.Diagnostics\CP.Diagnostics.Sitecore.LogAnalyzer\bin\Debug\CP.Diagnostics.Sitecore.LogAnalyzer.pdb
+C:\Users\ravikiran gokaraju\Documents\GitRepositories\Sitecore.Diagnostics\CP.Diagnostics.Sitecore.LogAnalyzer\obj\Debug\CP.Diagnostics.Sitecore.LogAnalyzer.csprojResolveAssemblyReference.cache
+C:\Users\ravikiran gokaraju\Documents\GitRepositories\Sitecore.Diagnostics\CP.Diagnostics.Sitecore.LogAnalyzer\obj\Debug\CP.Diagnostics.Sitecore.LogAnalyzer.dll
+C:\Users\ravikiran gokaraju\Documents\GitRepositories\Sitecore.Diagnostics\CP.Diagnostics.Sitecore.LogAnalyzer\obj\Debug\CP.Diagnostics.Sitecore.LogAnalyzer.pdb
